@@ -4,6 +4,8 @@
 
 部分后台功能正在开发中
 
+有问题欢迎联系QQ :3214444445
+
 ## 安装方式 （需要搭配后端程序使用）
 [后端程序](https://github.com/Liscva/mettingroom)
 vite.config.ts中配置后端地址代理
