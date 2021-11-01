@@ -102,7 +102,7 @@ export default defineComponent({
             }
           }).then(res=>{
             if(res.code==='200'){
-              ElMessage.success({
+              ElMessage({
                 message: '用户添加成功！',
                 type: 'success'
               })

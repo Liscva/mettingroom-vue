@@ -13,7 +13,7 @@
                   fit="contain"
               />
               <div style="float: right;padding:5px 0;">
-                <el-button type="round">登出</el-button>
+<!--                <el-button type="round">登出</el-button>-->
               </div>
             </el-col>
             <el-col :span="4" />

@@ -79,7 +79,7 @@ const validateResposeData = (res: Respose) => {
             message: res.msg,
             type: 'error'
         });
-        if(res.code.startsWith("A022")){
+        if(res.code.startsWith("A022")&&location.href.indexOf("/login")===-1){
             const {loginOut} = useUserProvide();
             loginOut(() => {
                 location.href = "/#/login";

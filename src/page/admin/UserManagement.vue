@@ -10,9 +10,9 @@
     </template>
   </el-input>
   <el-button-group style="float: right">
-    <el-button @click="userAddDialogshow">新建</el-button>
-    <el-button>修改密码</el-button>
-    <el-button autofocus="false">删除</el-button>
+    <el-button @click="userAddDialogshow">新建用户</el-button>
+    <el-button @click="userEditDialogshow">修改用户</el-button>
+    <el-button autofocus="false">删除用户</el-button>
   </el-button-group>
   <el-table
       ref="tableForm"
@@ -41,25 +41,43 @@
         :onSubmitSuccess="onSubmitSuccess"
     />
   </el-dialog>
+  <el-dialog
+      v-model="editUserDialogVisible"
+      title="用户修改"
+      width="520px"
+      destroy-on-close
+      center
+  >
+    <UserEditDialog
+        :currEditUser="currSelectUser"
+        :onClose="onClose"
+        :onSubmitSuccess="onSubmitSuccess"
+    />
+  </el-dialog>
 </template>
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, reactive, ref, toRefs} from 'vue'
 import {findUserList} from "@/api/user";
+import {ElMessage} from "element-plus";
 import {Respose} from "@/utils/request";
-import UserAddDialog from "@/page/admin/userManager/UserAddDialog.vue";
+import UserAddDialog from "./userManager/UserAddDialog.vue";
+import UserEditDialog from "./userManager/UserEditDialog.vue";
 
 export default defineComponent({
   name: 'UserManagement',
-  components: {UserAddDialog},
+  components: {UserAddDialog,UserEditDialog},
   setup() {
     const tableData = ref([])
     const searchForm = reactive({
       userName: null
     })
-    const multipleSelection = ref(null);
+    const multipleSelection = ref([]);
     const tableForm = ref<any>(null)
     const addUserDialogVisible = ref<boolean>(false);
+    const editUserDialogVisible = ref<boolean>(false);
+    const currSelectUser = ref(null);
+
 
     const handleSelectionChange = (val: any) => {
       multipleSelection.value = val
@@ -82,8 +100,22 @@ export default defineComponent({
     const userAddDialogshow = () => {
       addUserDialogVisible.value = true;
     }
+    const userEditDialogshow = () => {
+      const selectUserList = multipleSelection.value;
+      if(selectUserList&&selectUserList.length===1){
+        currSelectUser.value = selectUserList[0];
+        editUserDialogVisible.value = true;
+      }else{
+        ElMessage({
+          message: '只能选择一个用户进行修改！',
+          type: 'error'
+        })
+      }
+
+    }
     const closeDialog = ()=>{
       addUserDialogVisible.value = false;
+      editUserDialogVisible.value = false;
     }
     const onClose = ()=>{
       closeDialog();
@@ -97,12 +129,15 @@ export default defineComponent({
       onClose,
       onSubmitSuccess,
       userAddDialogshow,
+      userEditDialogshow,
       ...toRefs(searchForm),
       requestUserList,
       tableForm,
       handleSelectionChange,
       tableData,
-      addUserDialogVisible
+      addUserDialogVisible,
+      editUserDialogVisible,
+      currSelectUser
     }
   }
 })

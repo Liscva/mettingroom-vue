@@ -17,6 +17,14 @@ export function findUserList(opt:object) {
     })
 }
 
+export function resetPassword(opt:object) {
+    return request({
+        url: '/api/mrUser/resetPassword.htm',
+        method: 'post',
+        data: opt
+    })
+}
+
 
 export function registerUser(opt:object) {
     return request({
