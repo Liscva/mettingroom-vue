@@ -90,7 +90,7 @@ export default defineComponent({
     const startAddUser = () => {
       store.form.validate().then((valid: boolean) => {
         if (valid) {
-          registerUser({
+          const opt = {
             mrUser:{
               userAccount:store.formValue.userAccount,
               userPassword:store.formValue.userPassword,
@@ -100,7 +100,8 @@ export default defineComponent({
               userEmail:store.formValue.userEmail,
               userPhone:store.formValue.userPhone,
             }
-          }).then(res=>{
+          }
+          registerUser(opt).then(res=>{
             if(res.code==='200'){
               ElMessage({
                 message: '用户添加成功！',

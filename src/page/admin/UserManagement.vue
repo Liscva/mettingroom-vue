@@ -12,7 +12,19 @@
   <el-button-group style="float: right">
     <el-button @click="userAddDialogshow">新建用户</el-button>
     <el-button @click="userEditDialogshow">修改用户</el-button>
-    <el-button autofocus="false">删除用户</el-button>
+    <el-popconfirm
+        confirm-button-text="是"
+        cancel-button-text="否"
+        :icon="InfoFilled"
+        icon-color="red"
+        @confirm="deleteManagerUser"
+        title="是否确认删除选中用户?"
+    >
+      <template #reference>
+        <el-button type="danger">删除用户</el-button>
+      </template>
+    </el-popconfirm>
+
   </el-button-group>
   <el-table
       ref="tableForm"
@@ -21,6 +33,7 @@
       @selection-change="handleSelectionChange"
   >
     <el-table-column type="selection" width="55"/>
+    <el-table-column property="userAccount" label="登录账号" width="120"/>
     <el-table-column property="userName" label="姓名" width="120"/>
     <el-table-column property="userPhone" label="手机号" width="120"/>
     <el-table-column property="userEmail" label="邮箱" show-overflow-tooltip/>
@@ -58,8 +71,9 @@
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, reactive, ref, toRefs} from 'vue'
-import {findUserList} from "@/api/user";
+import {findUserList,deleteUser} from "@/api/user";
 import {ElMessage} from "element-plus";
+import { InfoFilled } from '@element-plus/icons'
 import {Respose} from "@/utils/request";
 import UserAddDialog from "./userManager/UserAddDialog.vue";
 import UserEditDialog from "./userManager/UserEditDialog.vue";
@@ -90,6 +104,26 @@ export default defineComponent({
           tableData.value = [];
         }
       })
+    }
+
+    const deleteManagerUser = () => {
+      const selectUserList = multipleSelection.value;
+      if(selectUserList&&selectUserList.length>0){
+        deleteUser({userAccount:selectUserList.toString()}).then((res: Respose) => {
+          if (res.code === '200') {
+            ElMessage({
+              message: '删除成功！',
+              type: 'success'
+            })
+            requestUserList();
+          }
+        })
+      }else{
+        ElMessage({
+          message: '请至少选择一个用户删除！',
+          type: 'error'
+        })
+      }
     }
 
     onBeforeMount(() => {
@@ -130,6 +164,8 @@ export default defineComponent({
       onSubmitSuccess,
       userAddDialogshow,
       userEditDialogshow,
+      deleteManagerUser,
+      InfoFilled,
       ...toRefs(searchForm),
       requestUserList,
       tableForm,
