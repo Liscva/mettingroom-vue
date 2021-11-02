@@ -9,3 +9,15 @@ export function findAreaList(opt:object) {
     })
 }
 
+export function increaseArea(opt: {
+    areaName:string,
+    areaExplication:string
+}) {
+    return request({
+        url: '/api/mrArea/increaseArea.htm',
+        method: 'post',
+        data: opt
+    })
+}
+
+

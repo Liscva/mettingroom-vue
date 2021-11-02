@@ -18,7 +18,10 @@ export function getCurrUserReserveDayList(opt:object) {
 }
 
 
-export function getReserveInfoByDayTime(opt:object) {
+export function getReserveInfoByDayTime(opt: {
+    day:string,
+    areaId:string | null
+}) {
     return request({
         url: '/api/mrReserveDayTime/getReserveInfoByDayTime.htm',
         method: 'get',

@@ -12,6 +12,8 @@
           />
           <div style="float: right;padding:5px 0;">
             <Area></Area>
+            <el-divider direction="vertical"/>
+            <Schedule />
             <el-button type="round" @click="goAdminPage">后台</el-button>
             <el-divider direction="vertical"/>
             <el-button type="round" @click="goLogin">登出</el-button>
@@ -50,15 +52,15 @@
 
 <script lang="ts">
 import {defineComponent, ref} from 'vue'
+import {useRouter} from 'vue-router';
 import Login from '@/components/LoginForm/Index.vue';
 import UserInfo from '@/components/UserInfo/Index.vue';
 import Calendar from "@/components/Calendar/Calendar.vue";
 import Event from "@/page/event/Event.vue";
 import Auth from "@/page/Auth.vue";
 import Area from "@/components/Area/Index.vue";
-import {useRouter} from 'vue-router';
-import Schedule from "@/components/Area/Schedule.vue";
 import {useUserInject} from "@/context";
+import Schedule from "@/components/Schedule/Index.vue";
 
 export default defineComponent({
   name: 'Home',

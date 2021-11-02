@@ -30,7 +30,7 @@
                 <i class="el-icon-menu"></i>
                 <template #title>用户管理</template>
               </el-menu-item>
-              <el-menu-item index="mettingmanager">
+              <el-menu-item index="roommanager">
                 <i class="el-icon-menu"></i>
                 <template #title>会议室管理</template>
               </el-menu-item>
@@ -43,6 +43,7 @@
           <el-container>
             <el-main>
               <UserManagement v-if="currMenu==='usermanager'"/>
+              <RoomManagement v-if="currMenu==='roommanager'"/>
             </el-main>
           </el-container>
         </el-container>
@@ -55,10 +56,11 @@
 <script lang="ts">
 import {defineComponent,ref} from 'vue'
 import UserManagement from "@/page/admin/UserManagement.vue";
+import RoomManagement from "@/page/admin/RoomManagement.vue";
 
 export default defineComponent({
   name: 'AdminPage',
-  components: {UserManagement},
+  components: {RoomManagement, UserManagement},
   setup(){
     const logo = ref<string>(
         '/images/logo.png'

@@ -3,7 +3,7 @@
       v-model="userName"
       placeholder="请输入姓名模糊查询"
       class="input-with-select"
-      style="width: 250px"
+      style=" width: 250px"
   >
     <template #append>
       <el-button icon="el-icon-search" @click="requestUserList"></el-button>

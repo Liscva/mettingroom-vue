@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, watch, ref, reactive} from 'vue'
-import {useReserveInject} from "@/context";
+import {useAreaInject, useReserveInject} from "@/context";
 import {getReserveInfoByDayTime} from "@/api/reserve";
 import ReserveForm from "@/components/ReserveForm/Index.vue";
 
@@ -60,9 +60,10 @@ export default defineComponent({
     const startTimeP=ref<string>('');
     const endTimeP=ref<string>('');
     const {reserveState} = useReserveInject();
+    const {areaState} = useAreaInject();
     const timeLineList = ref<ItimeLine[]>([]);
     const requestReserveInfoByDayTime = (day: string) => {
-      getReserveInfoByDayTime({day}).then((res) => {
+      getReserveInfoByDayTime({day,areaId: areaState.currAreaId}).then((res) => {
         if (res.code === '200') {
           timeLineList.value = res.data;
         }

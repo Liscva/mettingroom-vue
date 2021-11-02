@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="areaState.currAreaId" placeholder="Select">
+  <el-select v-model="areaState.currAreaId" @change="onAreaChange" placeholder="Select">
     <el-option
         v-for="item in areaState.areaList"
         :key="item.areaId"
@@ -8,21 +8,17 @@
     >
     </el-option>
   </el-select>
-  <el-divider direction="vertical"/>
-  <Schedule />
 </template>
 
 <script lang="ts">
 import {defineComponent, onBeforeMount} from 'vue'
 import {findAreaList} from "@/api/area";
 import {Respose} from "utils/request";
-import Schedule from "@/components/Area/Schedule.vue";
 import { useAreaInject } from '@/context';
 
 
 export default defineComponent({
   name: 'Area',
-  components:{Schedule},
   setup() {
     const { areaState,setCurrAreaId, setAreaList } = useAreaInject();
     const requestAreaList = () => {
@@ -38,11 +34,15 @@ export default defineComponent({
         }
       })
     }
+    const onAreaChange = (val:string) =>{
+      setCurrAreaId(val)
+    }
     onBeforeMount(() => {
       requestAreaList()
     })
     return {
       areaState,
+      onAreaChange,
       requestAreaList
     }
   }
