@@ -79,9 +79,9 @@ const validateResposeData = (res: Respose) => {
             message: res.msg,
             type: 'error'
         });
-        if(res.code.startsWith("A022")&&location.href.indexOf("/login")===-1){
-            const {loginOut} = useUserProvide();
-            loginOut(() => {
+        if(res.code.startsWith("A022")&&location.href.indexOf("/login")<0){
+            const {debouncedLoginOut} = useUserProvide();
+            debouncedLoginOut(() => {
                 location.href = "/#/login";
             })
         }

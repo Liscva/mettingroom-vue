@@ -9,7 +9,11 @@ export function reserveMettingRoom(opt:object) {
         data: opt
     })
 }
-export function getCurrUserReserveDayList(opt:object) {
+export function getCurrUserReserveDayList(opt: {
+    month: string,
+    userCode: number,
+    areaId:number
+}) {
     return request({
         url: '/api/mrReserve/getCurrUserReserveDayList.htm',
         method: 'get',
@@ -20,7 +24,7 @@ export function getCurrUserReserveDayList(opt:object) {
 
 export function getReserveInfoByDayTime(opt: {
     day:string,
-    areaId:string | null
+    areaId:number | null
 }) {
     return request({
         url: '/api/mrReserveDayTime/getReserveInfoByDayTime.htm',

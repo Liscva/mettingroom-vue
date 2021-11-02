@@ -1,7 +1,7 @@
 import {reactive, inject, provide, Ref, readonly} from 'vue';
 
 export interface Area {
-    currAreaId: string|null,
+    currAreaId: number|null,
     currArea: AreaInfo|null
     areaList: AreaInfo[]
 }
@@ -26,7 +26,7 @@ export const useAreaProvide = () => {
         currArea: null,
         areaList: []
     });
-    const setCurrAreaId = (currAreaId: string|null) => (areaState.currAreaId = currAreaId);
+    const setCurrAreaId = (currAreaId: number|null) => (areaState.currAreaId = currAreaId);
     const setAreaList = (areaList: AreaInfo[]) => ( areaState.areaList = areaList);
     provide(symbol, {
         areaState,

@@ -20,7 +20,7 @@
           <h4>{{ item.mrReserve.reserveTodo }}</h4>
           <p>{{ `${item.mrReserve.reserveUserName} 提交于 ${item.mrReserve.reserveTime}` }}</p>
         </el-card>
-        <el-button type="primary" v-if="item.free" @click="()=>speedReserve(item.headTime,item.tailTime)">{{ `快捷预约${item.headTime}-${item.tailTime}` }}</el-button>
+        <el-button type="primary" v-if="item.free&&item.tailTime" @click="()=>speedReserve(item.headTime,item.tailTime)">{{ `快捷预约${item.headTime}-${item.tailTime}` }}</el-button>
       </el-timeline-item>
       <el-timeline-item :timestamp="timeLineList[timeLineList.length-1].tailTime" placement="top">
       </el-timeline-item>
@@ -62,8 +62,8 @@ export default defineComponent({
     const {reserveState} = useReserveInject();
     const {areaState} = useAreaInject();
     const timeLineList = ref<ItimeLine[]>([]);
-    const requestReserveInfoByDayTime = (day: string) => {
-      getReserveInfoByDayTime({day,areaId: areaState.currAreaId}).then((res) => {
+    const requestReserveInfoByDayTime = () => {
+      getReserveInfoByDayTime({day:reserveState.currUserReserveDay,areaId: areaState.currAreaId}).then((res) => {
         if (res.code === '200') {
           timeLineList.value = res.data;
         }
@@ -71,14 +71,18 @@ export default defineComponent({
     }
 
     onBeforeMount(() => {
-      requestReserveInfoByDayTime(reserveState.currUserReserveDay);
+      requestReserveInfoByDayTime();
     })
     watch(() => reserveState.currUserReserveDay, (val, old) => {
-      if (val) {
-        requestReserveInfoByDayTime(val);
+      if (val&&areaState.currAreaId) {
+        requestReserveInfoByDayTime();
       }
     })
-
+    watch(() => areaState.currAreaId, (val, old) => {
+      if (val&&reserveState.currUserReserveDay) {
+        requestReserveInfoByDayTime();
+      }
+    })
     const speedReserve = (startTime: string, endTime: string) => {
       startTimeP.value = startTime;
       endTimeP.value = endTime;
@@ -95,7 +99,7 @@ export default defineComponent({
       closeDialog();
     }
     const onSubmitSuccess = () => {
-      requestReserveInfoByDayTime(reserveState.currUserReserveDay);
+      requestReserveInfoByDayTime();
       closeDialog();
     }
     return {

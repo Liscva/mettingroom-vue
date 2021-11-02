@@ -1,5 +1,6 @@
 import {reactive, inject, provide, Ref,readonly } from 'vue';
 import {getCache, removeCache, setCache} from "utils/cache";
+import {Debounced} from "utils/debounced";
 
 export interface User {
     status: string | null,
@@ -47,7 +48,8 @@ export const useUserProvide = () => {
         setLoginUser,
         loginOut
     });
-    return {loginOut}
+    const debouncedLoginOut: Function = new Debounced().use(loginOut, 500);
+    return {debouncedLoginOut}
 };
 
 export const useUserInject = () => {
