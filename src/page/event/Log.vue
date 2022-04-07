@@ -64,7 +64,7 @@ export default defineComponent({
     const timeLineList = ref<ItimeLine[]>([]);
     const requestReserveInfoByDayTime = () => {
       getReserveInfoByDayTime({day:reserveState.currUserReserveDay,areaId: areaState.currAreaId}).then((res) => {
-        if (res.code === '200') {
+        if (res.code === 200) {
           timeLineList.value = res.data;
         }
       })

@@ -1,6 +1,60 @@
 import axios, {AxiosResponse, AxiosRequestConfig} from 'axios';
 import {ElMessage} from 'element-plus';
-import {useUserProvide} from "@/context/user";
+import {getCache, removeAllCache} from "utils/cache";
+
+/**
+ * 存放所有的请求信息
+ **/
+let pendingRequest = new Map();
+
+const getRequestKey = (config: AxiosRequestConfig) => {
+  let {
+    method,
+    url,
+    params,
+    data
+  } = config;
+  // axios中取消请求及阻止重复请求的方法
+  // 参数相同时阻止重复请求：
+  // return [method, url, JSON.stringify(params), JSON.stringify(data)].join("&");
+  // 请求方法相同，参数不同时阻止重复请求
+  return [method, url,params].join("&");
+}
+
+/**
+ * 清除所有请求并返回登录页面
+ * @param config
+ */
+const clearPendingRequest = (config: AxiosRequestConfig)=> {
+  pendingRequest.forEach((value,key)=>{
+    debugger
+    value(key);
+  })
+  pendingRequest.clear();
+}
+
+const addPendingRequest = (config: AxiosRequestConfig)=> {
+  // console.log(config.url)
+  let requestKey = getRequestKey(config);
+  config.cancelToken = config.cancelToken || new axios.CancelToken((cancel) => {
+    if (!pendingRequest.has(requestKey)) {
+      pendingRequest.set(requestKey, cancel);
+    }
+  });
+}
+
+/**
+ * @description 取消重复请求 **/
+const removePendingRequest = (config: AxiosRequestConfig) => {
+  let requestKey = getRequestKey(config);
+  if (pendingRequest.has(requestKey)) {
+    // 如果是重复的请求，则执行对应的cancel函数
+    let cancel = pendingRequest.get(requestKey);
+    cancel(requestKey);
+    // 将前一次重复的请求移除
+    pendingRequest.delete(requestKey);
+  }
+}
 
 const instance = axios.create({
     baseURL: '',
@@ -18,7 +72,7 @@ interface Error {
 
 export interface Respose {
     msg: string,
-    code: string;
+    code: number;
     success: boolean,
     data: any
 }
@@ -57,13 +111,21 @@ const err = (error: Error) => {
     return Promise.reject(error);
 };
 instance.interceptors.request.use((config: AxiosRequestConfig) => {
+    if(!getCache(getCache("tokenName"))){
+      clearPendingRequest(config);
+    }else{
+      // 检查是否存在重复请求，若存在则取消已发的请求
+      removePendingRequest(config);
+      // 把当前请求信息添加到pendingRequest对象中
+      addPendingRequest(config);
+    }
     return config;
 }, err);
 
 instance.interceptors.response.use((response: AxiosResponse) => {
     const code = Number(response.status);
     if (code === 200) {
-        validateResposeData(response.data);
+        setTimeout(()=>validateResposeData(response.data), 500 )
         return response.data;
     } else {
         ElMessage({
@@ -74,16 +136,14 @@ instance.interceptors.response.use((response: AxiosResponse) => {
 }, err);
 
 const validateResposeData = (res: Respose) => {
-    if (res.code !== '200') {
+    if (res.code !== 200) {
         ElMessage({
             message: res.msg,
             type: 'error'
         });
-        if(res.code.startsWith("A022")&&location.href.indexOf("/login")<0){
-            const {debouncedLoginOut} = useUserProvide();
-            debouncedLoginOut(() => {
-                location.href = "/#/login";
-            })
+        if(res.code>=400&&res.code<=403&&location.href.indexOf("/login")<0&&getCache("userInfo")){
+          removeAllCache();
+          location.href = "/#/login";
         }
 
     }

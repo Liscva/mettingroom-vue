@@ -1,6 +1,5 @@
 import {reactive, inject, provide, Ref,readonly } from 'vue';
-import {getCache, removeCache, setCache} from "utils/cache";
-import {Debounced} from "utils/debounced";
+import {getCache, removeAllCache, setCache} from "utils/cache";
 
 export interface User {
     status: string | null,
@@ -13,8 +12,16 @@ export interface UserInfo {
     userName: string | null,
     userEmail: string | null,
     userPhone: number | null,
-    createTime: string|null
+    createTime: string|null,
+    securityInfo: SecurityInfo
 }
+
+export interface SecurityInfo {
+  tokenName: string,
+  tokenValue: string,
+  loginId: string
+}
+
 
 export type UserContext = {
     userState: Ref<User>;
@@ -32,11 +39,13 @@ export const useUserProvide = () => {
     });
     const setLoginUser = (userInfo: UserInfo) => {
         setCache("userInfo", JSON.stringify(userInfo));
+        setCache("tokenName", userInfo.securityInfo.tokenName);
+        setCache(userInfo.securityInfo.tokenName, userInfo.securityInfo.tokenValue);
         userState.userInfo = userInfo
         userState.status = 'login';
     }
     const loginOut = (callback:Function|null) => {
-        removeCache("userInfo");
+        removeAllCache();
         userState.userInfo = null;
         userState.status = 'unlogin';
         if(callback){
@@ -48,8 +57,6 @@ export const useUserProvide = () => {
         setLoginUser,
         loginOut
     });
-    const debouncedLoginOut: Function = new Debounced().use(loginOut, 500);
-    return {debouncedLoginOut}
 };
 
 export const useUserInject = () => {

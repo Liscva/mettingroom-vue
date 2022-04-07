@@ -98,7 +98,7 @@ export default defineComponent({
     }
     const requestUserList = () => {
       findUserList({...searchForm}).then((res: Respose) => {
-        if (res.code === '200') {
+        if (res.code === 200) {
           tableData.value = res.data;
         } else {
           tableData.value = [];
@@ -110,7 +110,7 @@ export default defineComponent({
       const selectUserList = multipleSelection.value;
       if(selectUserList&&selectUserList.length>0){
         deleteUser({userAccount:selectUserList.toString()}).then((res: Respose) => {
-          if (res.code === '200') {
+          if (res.code === 200) {
             ElMessage({
               message: '删除成功！',
               type: 'success'

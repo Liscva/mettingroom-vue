@@ -117,7 +117,7 @@ export default defineComponent({
               ...userState.userInfo
             }
           }).then((res) => {
-            if (res.code === '200') {
+            if (res.code === 200) {
               ElMessage({
                 message: '预约成功',
                 type: 'success'

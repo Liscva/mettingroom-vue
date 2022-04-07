@@ -83,7 +83,7 @@ export default defineComponent({
     }
     const requestRoomList = () => {
       findAreaList({...searchForm}).then((res: Respose) => {
-        if (res.code === '200') {
+        if (res.code === 200) {
           roomList.value = res.data;
         } else {
           roomList.value = [];

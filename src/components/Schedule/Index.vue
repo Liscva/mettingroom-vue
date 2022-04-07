@@ -47,7 +47,7 @@ export default defineComponent({
             userCode: userInfo.userCode,
             areaId: areaState.currAreaId
           }).then((res) => {
-            if (res.code === '200') {
+            if (res.code === 200) {
               setCurrUserReserveDayList(res.data);
             }
           })

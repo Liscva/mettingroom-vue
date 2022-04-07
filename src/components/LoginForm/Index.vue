@@ -25,6 +25,7 @@ import { defineComponent, toRefs, reactive, ref } from 'vue';
 import {login} from "@/api/user";
 import {useUserInject} from "@/context";
 import {UserInfo} from "@/context/user";
+import {setCache} from "utils/cache";
 
 interface LoginForm {
   userAccount: string | number;
@@ -53,8 +54,9 @@ export default defineComponent({
       state.loginForm.validate().then((valid: boolean) => {
         if (valid) {
           login(state.form).then(res=>{
-            if(res.code==='200'){
+            if(res.code===200){
               const userInfo:UserInfo = res.data;
+              setCache()
               setLoginUser(userInfo);
             }
           })

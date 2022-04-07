@@ -23,7 +23,7 @@ export default defineComponent({
     const { areaState,setCurrAreaId, setAreaList } = useAreaInject();
     const requestAreaList = () => {
       findAreaList({}).then((res: Respose) => {
-        if (res.code === '200') {
+        if (res.code === 200) {
           if(res.data&&res.data.length>0){
             setCurrAreaId(res.data[0].areaId);
             setAreaList(res.data);
